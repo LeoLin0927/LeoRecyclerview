@@ -1,6 +1,8 @@
 package com.example.leo4_lin.leorecyclerview;
 
+import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,9 +20,11 @@ import java.util.List;
 public class Item_Content extends  RecyclerView.Adapter<Item_Content.ViewHolder>{
 
     private List<HashMap<String,String>>  mData;
+    private AlertDialog.Builder mdialog;
 
-    public Item_Content(List<HashMap<String,String>> data) {
+    public Item_Content(List<HashMap<String,String>> data, AlertDialog.Builder dialog) {
         mData = data;
+        mdialog = dialog;
     }
 
     //建構自己的ViewHolder取代原始的
@@ -37,8 +41,7 @@ public class Item_Content extends  RecyclerView.Adapter<Item_Content.ViewHolder>
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item, parent, false);
         ViewHolder vh = new ViewHolder(v);
         return vh;
     }
@@ -46,11 +49,23 @@ public class Item_Content extends  RecyclerView.Adapter<Item_Content.ViewHolder>
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         //取出先前所找出的所有app
-        HashMap data = mData.get(position);
-        Drawable icon = (Drawable)data.get("icon");
-        String AppName = (String) data.get("appName");
+        final HashMap data = mData.get(position);
+        final Drawable icon = (Drawable)data.get("icon");
+        final String AppName = (String) data.get("appName");
+        final String PackageName = (String) data.get("packageName");
+        final String version = (String) data.get("version");
+        final String appSize = (String) data.get("appSize");
+
         holder.image.setImageDrawable(icon);
         holder.mTextView.setText(AppName);
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openDialog(icon,AppName,PackageName,version,appSize);
+            }
+        });
+
     }
 
     @Override
@@ -58,4 +73,20 @@ public class Item_Content extends  RecyclerView.Adapter<Item_Content.ViewHolder>
         return mData.size();
     }
 
+    private void openDialog(Drawable icon,String AppName,String PackageName,String version,String appSize) {
+
+        mdialog.setIcon(icon)
+                .setTitle(AppName)
+                .setMessage("Version :"+version +"\n"+
+                "Size:"+String.valueOf(appSize)+"\n"+
+                "packageName:"+PackageName)
+                .setPositiveButton("OK",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        }
+                ).show();
+    }
 }
