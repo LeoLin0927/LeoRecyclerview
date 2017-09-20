@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public static String bytes2kb(int bytes) {
+    public String bytes2kb(int bytes) {
         BigDecimal filesize = new BigDecimal(bytes);
         BigDecimal megabyte = new BigDecimal(1024 * 1024);
         float returnValue = filesize.divide(megabyte, 2, BigDecimal.ROUND_UP)
